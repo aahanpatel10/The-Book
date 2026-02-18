@@ -62,9 +62,26 @@
 @media (max-width: 768px) {
     .navLinks {
         display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: rgba(10, 10, 10, 0.95);
+        backdrop-filter: blur(10px);
+        flex-direction: column;
+        padding: var(--spacing-lg);
+        border-bottom: 1px solid var(--glass-border);
+        gap: var(--spacing-md);
+    }
+
+    .navLinksOpen {
+        display: flex;
     }
 
     .mobileMenuBtn {
         display: block;
+        background: none;
+        border: none;
+        cursor: pointer;
     }
 }

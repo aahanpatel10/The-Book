@@ -1,19 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import { getReservationById, Reservation } from '@/utils/storage';
 
-export default function StatusPage() {
+function StatusContent() {
+    const searchParams = useSearchParams();
+    const urlId = searchParams.get('id');
     const [bookingId, setBookingId] = useState('');
     const [reservation, setReservation] = useState<Reservation | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [searched, setSearched] = useState(false);
 
-    const handleCheckStatus = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!bookingId.trim()) return;
+    const checkStatus = async (id: string) => {
+        if (!id.trim()) return;
 
         setLoading(true);
         setError('');
@@ -21,7 +23,7 @@ export default function StatusPage() {
         setSearched(false);
 
         try {
-            const res = await getReservationById(bookingId.trim());
+            const res = await getReservationById(id.trim());
             setReservation(res);
             setSearched(true);
         } catch (err) {
@@ -30,6 +32,18 @@ export default function StatusPage() {
         } finally {
             setLoading(false);
         }
+    };
+
+    useEffect(() => {
+        if (urlId) {
+            setBookingId(urlId);
+            checkStatus(urlId);
+        }
+    }, [urlId]);
+
+    const handleCheckStatus = async (e: React.FormEvent) => {
+        e.preventDefault();
+        checkStatus(bookingId);
     };
 
     return (
@@ -77,8 +91,8 @@ export default function StatusPage() {
                             <div className="text-center mb-6">
                                 <div className="text-sm opacity-60 mb-1">Status</div>
                                 <div className={`text-3xl font-bold ${reservation.status === 'confirmed' ? 'text-green-400' :
-                                        reservation.status === 'rejected' ? 'text-red-400' :
-                                            'text-yellow-400'
+                                    reservation.status === 'rejected' ? 'text-red-400' :
+                                        'text-yellow-400'
                                     }`}>
                                     {reservation.status.toUpperCase()}
                                 </div>
@@ -113,5 +127,13 @@ export default function StatusPage() {
                 </div>
             </div>
         </main>
+    );
+}
+
+export default function StatusPage() {
+    return (
+        <Suspense fallback={<div className="flex justify-center items-center h-screen text-white">Loading...</div>}>
+            <StatusContent />
+        </Suspense>
     );
 }

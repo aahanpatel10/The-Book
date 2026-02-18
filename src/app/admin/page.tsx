@@ -265,6 +265,9 @@ export default function AdminPage() {
                                                         }`}>
                                                         {res.status}
                                                     </span>
+                                                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '0.25rem', fontFamily: 'monospace' }}>
+                                                        {res.id}
+                                                    </div>
                                                 </td>
                                                 <td>
                                                     <div style={{ fontWeight: 500 }}>{res.date}</div>

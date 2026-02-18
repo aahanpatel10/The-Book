@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { getAvailableSlots, addReservation } from '@/utils/storage';
 import styles from './BookingForm.module.css';
 
@@ -9,6 +10,7 @@ interface BookingFormProps {
 }
 
 export default function BookingForm({ date }: BookingFormProps) {
+    const router = useRouter();
     const [slots, setSlots] = useState<string[]>([]);
     const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
     const [formData, setFormData] = useState({
@@ -65,6 +67,12 @@ export default function BookingForm({ date }: BookingFormProps) {
 
             setIsSubmitting(false);
             setIsSuccess(true);
+
+            // Automatically redirect to status page after a short delay or immediately
+            // Redirecting after 2 seconds to allow success state to be visible briefly
+            setTimeout(() => {
+                router.push(`/reservations/status?id=${newRes.id}`);
+            }, 1500);
         } catch (error) {
             console.error("Booking failed", error);
             setIsSubmitting(false);
